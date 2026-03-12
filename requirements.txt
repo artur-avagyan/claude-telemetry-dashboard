@@ -1,0 +1,25 @@
+# ── Core dashboard dependencies ──────────────────────────────────────────────
+streamlit==1.55.0
+plotly==6.6.0
+pandas==2.3.3
+numpy==2.4.3
+
+# ── Data / HTTP utilities ─────────────────────────────────────────────────────
+requests==2.32.5
+python-dateutil==2.9.0.post0
+certifi==2026.2.25
+charset-normalizer==3.4.5
+packaging==26.0
+click==8.3.1
+colorama==0.4.6
+
+# ── Streamlit internal deps ───────────────────────────────────────────────────
+altair==6.0.0
+narwhals==2.18.0
+tornado==6.5.5
+traitlets==5.14.3
+pyzmq==27.1.0
+
+# ── Optional: notebook support ───────────────────────────────────────────────
+# jupyter
+# ipykernel

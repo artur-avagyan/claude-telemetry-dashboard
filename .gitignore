@@ -1,0 +1,66 @@
+# ── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+provectus_intership/
+venv/
+.venv/
+env/
+.env/
+
+# ── Databases ─────────────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Jupyter ───────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+notebooks/
+
+# ── Environment / secrets ─────────────────────────────────────────────────────
+.env
+.env.*
+*.env
+secrets.toml
+.streamlit/secrets.toml
+
+# ── OS artifacts ──────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / editor ──────────────────────────────────────────────────────────────
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Logs & temp files ─────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.bak
+
+# ── Data outputs (keep directory, ignore generated files) ─────────────────────
+data/output/
+!data/output/.gitkeep
+
+
+# OS
+.DS_Store
+Thumbs.db
+*.db
+
+# IDE
+.vscode/
+.idea/
