@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Claude Telemetry Dashboard — Insights Presentation</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a0f0a;
+    font-family: 'Inter', sans-serif;
+    color: #F7F2EE;
+  }
+
+  /* ── Slide layout ───────────────────────────────────────── */
+  .slide {
+    width: 1100px;
+    min-height: 620px;
+    margin: 40px auto;
+    background: linear-gradient(160deg, #2a1a10 0%, #1e1208 100%);
+    border: 1px solid rgba(207,118,80,0.30);
+    border-radius: 18px;
+    padding: 52px 60px;
+    position: relative;
+    overflow: hidden;
+    page-break-after: always;
+  }
+
+  /* decorative top bar */
+  .slide::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #CF7650, #B96443);
+  }
+
+  /* slide number badge */
+  .slide-num {
+    position: absolute;
+    top: 20px; right: 28px;
+    font-family: 'Cinzel', serif;
+    font-size: 0.72em;
+    color: rgba(207,118,80,0.55);
+    letter-spacing: 0.12em;
+  }
+
+  /* ── Typography ─────────────────────────────────────────── */
+  .slide-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.68em;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #CF7650;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #F7F2EE;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.65em;
+    font-weight: 700;
+    color: #F7F2EE;
+    margin-bottom: 28px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(207,118,80,0.30);
+  }
+
+  h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.0em;
+    color: #CF7650;
+    margin-bottom: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  .subtitle {
+    font-size: 1.05em;
+    color: #b9a090;
+    line-height: 1.6;
+    max-width: 700px;
+  }
+
+  /* ── KPI grid ───────────────────────────────────────────── */
+  .kpi-row {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .kpi-row.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .kpi-row.cols-2 { grid-template-columns: repeat(2, 1fr); }
+
+  .kpi {
+    background: linear-gradient(145deg, #4d3526, #3a2518);
+    border: 1px solid rgba(207,118,80,0.35);
+    border-top: 3px solid #CF7650;
+    border-radius: 12px;
+    padding: 18px 20px;
+  }
+
+  .kpi-label {
+    font-size: 0.68em;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: #CF7650;
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-size: 1.9em;
+    font-weight: 700;
+    color: #F7F2EE;
+    line-height: 1.1;
+  }
+
+  .kpi-sub {
+    font-size: 0.72em;
+    color: #b9a090;
+    margin-top: 4px;
+  }
+
+  /* ── Table ──────────────────────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88em;
+  }
+
+  thead tr { background: #CF7650; }
+
+  th {
+    font-family: 'Cinzel', serif;
+    font-size: 0.72em;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #1a0f0a;
+    padding: 9px 14px;
+    text-align: left;
+  }
+
+  td {
+    padding: 7px 14px;
+    color: #F7F2EE;
+    border-bottom: 1px solid rgba(207,118,80,0.12);
+    background: #3a2518;
+  }
+
+  tr:nth-child(even) td { background: #4d3526; }
+
+  /* ── Chips / tags ───────────────────────────────────────── */
+  .chip {
+    display: inline-block;
+    background: rgba(207,118,80,0.18);
+    border: 1px solid rgba(207,118,80,0.40);
+    color: #CF7650;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin: 4px 4px 4px 0;
+  }
+
+  /* ── Insight box ────────────────────────────────────────── */
+  .insight {
+    background: rgba(207,118,80,0.10);
+    border-left: 3px solid #CF7650;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 18px;
+    margin-bottom: 12px;
+    font-size: 0.9em;
+    line-height: 1.55;
+    color: #F7F2EE;
+  }
+
+  .insight strong { color: #CF7650; }
+
+  /* ── Two-column layout ──────────────────────────────────── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  /* ── Bar mini-chart ─────────────────────────────────────── */
+  .bar-wrap { margin-top: 8px; }
+  .bar-item { margin-bottom: 9px; }
+  .bar-label { font-size: 0.78em; color: #b9a090; margin-bottom: 3px; display: flex; justify-content: space-between; }
+  .bar-label span { color: #CF7650; font-weight: 600; }
+  .bar-track { background: rgba(255,255,255,0.06); border-radius: 4px; height: 8px; }
+  .bar-fill  { background: linear-gradient(90deg, #CF7650, #B96443); border-radius: 4px; height: 8px; }
+
+  /* ── Cover decorative circle ────────────────────────────── */
+  .bg-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(207,118,80,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  .footer {
+    position: absolute;
+    bottom: 22px; left: 60px; right: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68em;
+    color: rgba(207,118,80,0.45);
+    letter-spacing: 0.08em;
+    border-top: 1px solid rgba(207,118,80,0.12);
+    padding-top: 10px;
+  }
+
+  /* ── Print styles ───────────────────────────────────────── */
+  @media print {
+    body { background: #1a0f0a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .slide { margin: 0 auto; border-radius: 0; width: 100%; }
+    .print-hint { display: none; }
+  }
+
+  .print-hint {
+    text-align: center;
+    color: #b9a090;
+    font-size: 0.88em;
+    padding: 16px;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .green { color: #6fcf7a; }
+  .red   { color: #e07070; }
+  .orange { color: #CF7650; }
+</style>
+</head>
+<body>
+
+<div class="print-hint">
+  📄 To save as PDF: Press <strong>Ctrl+P</strong> (or Cmd+P on Mac) → <strong>Save as PDF</strong> → set paper size to A4 Landscape or Letter.
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 1 — COVER
+═══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="bg-circle" style="width:500px;height:500px;top:-100px;right:-100px;"></div>
+  <div class="bg-circle" style="width:300px;height:300px;bottom:-80px;left:-60px;"></div>
+
+  <div class="slide-num">01 / 05</div>
+
+  <div style="margin-top: 60px;">
+    <div class="slide-label">Provectus Internship — Technical Assignment</div>
+    <h1>Claude Code<br/>Telemetry Analytics</h1>
+    <p class="subtitle" style="margin-top:16px;">
+      An interactive analytics platform that transforms raw Claude Code usage logs
+      into actionable business insights — covering cost, performance, user behaviour,
+      tool adoption, and 7-day predictive forecasting.
+    </p>
+  </div>
+
+  <div class="kpi-row cols-4" style="margin-top: 52px;">
+    <div class="kpi">
+      <div class="kpi-label">API Requests</div>
+      <div class="kpi-value">118,014</div>
+      <div class="kpi-sub">across 5 models</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Cost</div>
+      <div class="kpi-value">$6,001</div>
+      <div class="kpi-sub">60-day window</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Active Users</div>
+      <div class="kpi-value">100</div>
+      <div class="kpi-sub">across 5 practices</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Sessions</div>
+      <div class="kpi-value">5,000</div>
+      <div class="kpi-sub">unique dev sessions</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Claude Telemetry Dashboard</span>
+    <span>Data window: Dec 2025 – Jan 2026</span>
+    <span>Built with Streamlit · Plotly · SQLite</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 2 — COST & MODEL USAGE
+═══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-num">02 / 05</div>
+  <div class="slide-label">Model Performance</div>
+  <h2>Cost & Usage by Model</h2>
+
+  <div class="two-col">
+    <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Requests</th>
+            <th>Total Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>claude-haiku-4-5</td><td>45,979</td><td>$185.70</td></tr>
+          <tr><td>claude-opus-4-6</td><td>25,959</td><td>$2,064.51</td></tr>
+          <tr><td>claude-opus-4-5</td><td>23,693</td><td>$2,193.69</td></tr>
+          <tr><td>claude-sonnet-4-5</td><td>19,698</td><td>$1,365.51</td></tr>
+          <tr><td>claude-sonnet-4-6</td><td>2,685</td><td>$192.02</td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top: 20px;">
+        <h3>Request Share</h3>
+        <div class="bar-wrap">
+          <div class="bar-item">
+            <div class="bar-label">claude-haiku-4-5 <span>39%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:39%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label">claude-opus-4-6 <span>22%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:22%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label">claude-opus-4-5 <span>20%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:20%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label">claude-sonnet-4-5 <span>17%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:17%"></div></div>
+          </div>
+          <div class="bar-item">
+            <div class="bar-label">claude-sonnet-4-6 <span>2%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:2%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Key Insights</h3>
+      <div class="insight">
+        <strong>Haiku dominates volume (39%)</strong> but costs only $186 total — 
+        used for fast, lightweight tasks where low latency matters most.
+      </div>
+      <div class="insight">
+        <strong>Opus models drive 73% of total cost</strong> ($4,258 combined) despite 
+        representing only 42% of requests — used for complex, high-value tasks.
+      </div>
+      <div class="insight">
+        <strong>Avg API latency: 8.98 s</strong> — Opus models average ~10-11 s 
+        versus Haiku's ~5.5 s, reflecting the quality/speed trade-off.
+      </div>
+      <div class="insight">
+        <strong>Sonnet-4-6 is newest and underused (2%)</strong> — adoption expected 
+        to grow as teams migrate from older Sonnet/Opus versions.
+      </div>
+
+      <div class="kpi-row cols-2" style="margin-top: 20px;">
+        <div class="kpi">
+          <div class="kpi-label">Cheapest per Request</div>
+          <div class="kpi-value" style="font-size:1.3em;">Haiku</div>
+          <div class="kpi-sub">$0.004 / request</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Most Expensive</div>
+          <div class="kpi-value" style="font-size:1.3em;">Opus-4-5</div>
+          <div class="kpi-sub">$0.093 / request</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Claude Telemetry Dashboard</span>
+    <span>Slide 2 — Model Cost & Usage</span>
+    <span>118,014 total API requests</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 3 — TOOL USAGE & WORKFLOW
+═══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-num">03 / 05</div>
+  <div class="slide-label">Tool Adoption</div>
+  <h2>Tool Usage & Developer Workflow</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Top 6 Tools by Execution Count</h3>
+      <div class="bar-wrap" style="margin-top: 4px;">
+        <div class="bar-item">
+          <div class="bar-label">Read <span>45,077</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Bash <span>42,332</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:94%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Edit <span>18,759</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:42%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Grep <span>11,342</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:25%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Glob <span>6,929</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:15%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">mcp_tool <span>6,293</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:14%"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Workflow Interpretation</h3>
+      <div class="insight">
+        <strong>Read + Grep + Glob = 63,348 executions</strong> — developers rely 
+        heavily on Claude for codebase exploration and understanding before editing.
+      </div>
+      <div class="insight">
+        <strong>Bash (42K) nearly matches Read (45K)</strong> — Claude is actively 
+        running commands, not just reading. High automation confidence.
+      </div>
+      <div class="insight">
+        <strong>mcp_tool in top 6</strong> signals strong MCP (Model Context Protocol) 
+        adoption — developers are connecting Claude to external tools and services.
+      </div>
+      <div class="insight">
+        <strong>High overall accept rate</strong> across all tools — developers trust 
+        Claude's tool decisions with minimal manual rejection.
+      </div>
+
+      <div style="margin-top: 16px;">
+        <div class="chip">📂 Read</div>
+        <div class="chip">⚡ Bash</div>
+        <div class="chip">✏️ Edit</div>
+        <div class="chip">🔍 Grep</div>
+        <div class="chip">🌐 mcp_tool</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Claude Telemetry Dashboard</span>
+    <span>Slide 3 — Tool Usage & Workflow</span>
+    <span>131,732 total tool executions</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 4 — ERRORS & USER BREAKDOWN
+═══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-num">04 / 05</div>
+  <div class="slide-label">Reliability & User Analytics</div>
+  <h2>Error Analysis & User Breakdown</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Error Summary</h3>
+
+      <div class="kpi-row cols-2" style="margin-bottom: 18px;">
+        <div class="kpi">
+          <div class="kpi-label">Total Errors</div>
+          <div class="kpi-value">1,362</div>
+          <div class="kpi-sub">out of 118,014 requests</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Error Rate</div>
+          <div class="kpi-value green">1.15%</div>
+          <div class="kpi-sub">well within healthy range</div>
+        </div>
+      </div>
+
+      <h3>Errors by HTTP Status</h3>
+      <table>
+        <thead><tr><th>Status</th><th>Count</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td>undefined</td><td>774</td><td>Network / timeout</td></tr>
+          <tr><td class="red">429</td><td>299</td><td>Rate limit exceeded</td></tr>
+          <tr><td>400</td><td>172</td><td>Bad request</td></tr>
+          <tr><td>500</td><td>83</td><td>Server error</td></tr>
+          <tr><td>401</td><td>34</td><td>Auth failure</td></tr>
+        </tbody>
+      </table>
+
+      <div class="insight" style="margin-top: 14px;">
+        <strong>HTTP 429 (rate limiting) = 22% of all errors</strong> — 
+        implementing request throttling / exponential back-off would eliminate these.
+      </div>
+    </div>
+
+    <div>
+      <h3>Active Users by Practice</h3>
+      <div class="bar-wrap">
+        <div class="bar-item">
+          <div class="bar-label">Frontend Engineering <span>25 users</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">ML Engineering <span>24 users</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:96%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Data Engineering <span>19 users</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:76%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Backend Engineering <span>19 users</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:76%"></div></div>
+        </div>
+        <div class="bar-item">
+          <div class="bar-label">Platform Engineering <span>13 users</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:52%"></div></div>
+        </div>
+      </div>
+
+      <div class="insight" style="margin-top: 16px;">
+        <strong>Frontend & ML teams are heaviest Claude users</strong> — 
+        likely leveraging it for UI component generation and model/notebook workflows.
+      </div>
+      <div class="insight">
+        <strong>Platform Engineering (13 users) has lowest adoption</strong> — 
+        opportunity to drive uptake through infra automation use cases.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Claude Telemetry Dashboard</span>
+    <span>Slide 4 — Errors & User Analytics</span>
+    <span>100 active users · 5 practices</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SLIDE 5 — FORECAST & RECOMMENDATIONS
+═══════════════════════════════════════════════════════════ -->
+<div class="slide">
+  <div class="slide-num">05 / 05</div>
+  <div class="slide-label">Predictive Analytics & Next Steps</div>
+  <h2>7-Day Forecast & Recommendations</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>Forecasting Methodology</h3>
+      <div class="insight">
+        A <strong>linear regression model</strong> (numpy polyfit, degree 1) was applied 
+        to daily event counts to project the next 7 days of usage.
+        The model is fitted on the full date range selected in the dashboard 
+        and clamps all predictions to ≥ 0.
+      </div>
+
+      <div class="kpi-row cols-2" style="margin-top: 18px;">
+        <div class="kpi">
+          <div class="kpi-label">Avg Daily Events (actual)</div>
+          <div class="kpi-value" style="font-size:1.4em;">~1,967</div>
+          <div class="kpi-sub">over 60-day window</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">Forecast Horizon</div>
+          <div class="kpi-value" style="font-size:1.4em;">7 days</div>
+          <div class="kpi-sub">extendable to 30+</div>
+        </div>
+      </div>
+
+      <div class="kpi-row cols-2">
+        <div class="kpi">
+          <div class="kpi-label">Model Input</div>
+          <div class="kpi-value" style="font-size:1.1em; color:#CF7650;">Daily counts</div>
+          <div class="kpi-sub">events, users, sessions</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-label">No Extra Libraries</div>
+          <div class="kpi-value" style="font-size:1.1em; color:#CF7650;">numpy only</div>
+          <div class="kpi-sub">already a pandas dep</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <h3>Strategic Recommendations</h3>
+      <div class="insight">
+        <strong>1. Control Opus costs</strong> — Opus models consume 73% of the budget. 
+        Route simple/repetitive tasks to Haiku with an automatic model-selection policy 
+        to reduce cost by an estimated 30–40%.
+      </div>
+      <div class="insight">
+        <strong>2. Fix rate limiting (429 errors)</strong> — 299 avoidable failures. 
+        Implement exponential back-off and a request queue to eliminate this error class entirely.
+      </div>
+      <div class="insight">
+        <strong>3. Grow Platform Engineering adoption</strong> — 13 users vs. 25 in Frontend. 
+        Run targeted workshops showing Claude Code for Terraform, CI/CD, and infra automation.
+      </div>
+      <div class="insight">
+        <strong>4. Migrate to newer models</strong> — Sonnet-4-6 and Opus-4-6 are available 
+        but underused. Older versions (4-5) still generate 43K+ requests/month in costs.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Claude Telemetry Dashboard</span>
+    <span>Slide 5 — Forecast & Recommendations</span>
+    <span>github.com/artur-avagyan/claude-telemetry-dashboard</span>
+  </div>
+</div>
+
+</body>
+</html>
